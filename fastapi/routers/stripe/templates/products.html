@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block tab_title %}Home{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <form id="checkout-form" action="/checkout" method="POST">
+            <div class="columns is-multiline">
+                    <div class="column is-one-third">
+                        <div class="card" style="border-radius: 10px; overflow: hidden;">
+                            <div class="card-image">
+                                {% if product.images %}
+                                    <figure class="image is-4by3">
+                                        <img src="{{ product.images[0] }}" alt="{{ product.name }}" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                                    </figure>
+                                {% endif %}
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <h2 class="title is-4">{{ product.name }}</h2>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>{{ product.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-one-third">
+                        <div class="card" style="border-radius: 10px; overflow: hidden;">
+                            <div class="card-image">
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    <p class="has-text-weight-bold">Selecciona tu cuponera:</p>
+                                    <table class="table is-striped is-hoverable is-fullwidth">
+                                        <tbody>
+                                            {% for price in product.prices %}
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" name="selected_product" value="{{ price.id }}" data-price="{{ price.amount }}" data-currency="{{ price.currency }}">
+                                                </td>
+                                                <td>{{ price.units }} daypasses</td>
+                                                <td>{{ price.amount }} {{ price.currency.upper() }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <div class="has-text-centered mt-5">
+                <button type="button" id="checkout-button" class="button is-primary is-medium">Proceed to Payment</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.getElementById("checkout-button").addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        // Get the selected product
+        const selectedRadio = document.querySelector('input[name="selected_product"]:checked');
+        if (!selectedRadio) {
+            alert("Please select a product.");
+            return;
+        }
+
+        const priceId = selectedRadio.value;
+        console.log(priceId);
+
+        // Send request to FastAPI to create checkout session
+        const userId = "73091836-59ed-44d6-9e04-b3bdcdf1928d";  // Replace with actual user ID
+        const url = `{{ url_for('create-checkout-session') }}?price_id=${encodeURIComponent(priceId)}&user_id=${encodeURIComponent(userId)}`;
+
+        // Send the GET request to FastAPI
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); // Get the error details
+                console.log("Error Data: ", errorData); // Log the error in the console
+            } else {
+                // If response is okay, redirect to the Stripe Checkout URL
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            }
+        } catch (error) {
+            console.error("Error creating checkout session:", error);
+            alert("An error occurred. Please try again.");
+        }
+    });
+</script>
+
+{% endblock %}

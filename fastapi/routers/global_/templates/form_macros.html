@@ -1,0 +1,127 @@
+
+{% macro input( name, id='', value='', type='text', placeholder='', label='', 
+                field_classes='', is_disabled=False, is_readonly=False, is_static=False, is_required=False,
+                left_icon='', left_icon_classes='',
+                step='') %}
+<div class="field">
+    {% if label %}
+    <label class="label" for="{{ id or name }}">{{ label }}</label>
+    {% endif %}
+    <div id={{"control-"+name}} class="control {%if left_icon%}has-icons-left{%endif%}">
+        <input  class="input {{field_classes}} {%if is_static%}is-static{%endif%} " 
+                name="{{ name }}" id="{{ id  or name }}" value="{{ value }}" type="{{ type }}" placeholder="{{placeholder}}" 
+                {%if is_disabled%}disabled{%endif%} {%if is_readonly%}readonly{%endif%} {%if is_required%}required{%endif%}
+                {% if type == 'number' and step %} step="{{ step }}" {% endif %}>
+        {% if left_icon %}
+        <span class="icon is-left {{left_icon_classes}}">
+            <i class="{{left_icon}}"></i>
+        </span>
+        {% endif %}
+        <span  id={{"error-icon-"+name}} class="icon is-right has-text-danger is-hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+        </span>
+    </div>
+    <p id={{"error-"+name}} class="help is-danger"></p>
+</div>
+{% endmacro %}
+
+{% macro input_addons( name, id='', value='', type='text', placeholder='', label='', 
+                field_classes='', control_classes='',
+                is_disabled=False, is_readonly=False, is_static=False, is_required=False,
+                left_icon='', left_icon_classes='',
+                step='',
+                addons_left='', addons_right='') %}
+<div class="field">
+    {% if label %}
+    <label class="label" for="{{ id or name }}">{{ label }}</label>
+    {% endif %}
+    <div class="control">
+        <div class="field has-addons">
+            {%if addons_left%}{{addons_left|safe}}{%endif%}
+            <div id={{"control-"+name}} class="control {{control_classes}} {%if left_icon%}has-icons-left{%endif%}">
+                <input  class="input {{field_classes}} {%if is_static%}is-static{%endif%}" 
+                name="{{ name }}" id="{{ id  or name }}" value="{{ value }}" type="{{ type }}" placeholder="{{placeholder}}" 
+                {%if is_disabled%}disabled{%endif%} {%if is_readonly%}readonly{%endif%} {%if is_required%}required{%endif%}
+                {% if type == 'number' and step %} step="{{ step }}" {% endif %}>
+                {% if left_icon %}
+                <span class="icon is-left {{left_icon_classes}}">
+                    <i class="{{left_icon}}"></i>
+                </span>
+                {% endif %}
+                <span  id={{"error-icon-"+name}}  class="icon is-right has-text-danger is-hidden">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </span>
+            </div>
+            {%if addons_right%}{{addons_right|safe}}{%endif%}
+        </div>
+        <p id={{"error-"+name}} class="help is-danger"></p>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro select(name, id='', placeholder=False, label='', 
+                field_classes='', is_disabled=False, is_required=False, is_fullwidth=False,
+                left_icon='', left_icon_classes='', 
+                preselected_key='',
+                options_dict={}) %}
+<div class="field">
+    {% if label %}
+    <label class="label" for="{{ id or name }}">{{ label }}</label>
+    {% endif %}
+    <div id={{"control-"+name}} class="control  {%if left_icon%}has-icons-left{%endif%}" >
+        <div class="select {{field_classes}} {%if is_fullwidth%}is-fullwidth{%endif%}">
+            <select name="{{ name }}" {%if is_disabled%}disabled{%endif%} {%if is_required%}required{%endif%}>
+            {% if placeholder %}
+            <option value="" selected disabled>{{ placeholder }}</option>
+            {% endif %}
+            {% for key, value in options_dict.items() %}
+            <option value="{{ key }}" {% if key == preselected_key and key != "" %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        {% if left_icon %}
+        <span class="icon is-left {{left_icon_classes}}">
+            <i class="{{left_icon}}"></i>
+        </span>
+        <span  id={{"error-icon-"+name}}  class="icon is-right has-text-danger is-hidden pr-6">
+            <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        {% endif %} 
+        <p id={{"error-"+name}} class="help is-danger"></p>
+
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro button(label='', id='', field_classes='', is_disabled=False, 
+                icon='', icon_classes='', 
+                type='button') %}
+<div class="control">
+    <button id="{{ id }}" type="{{ type }}" 
+            class="button {% if is_disabled %}is-disabled{% endif %} {{ field_classes }}">
+        {% if icon %}
+        <span class="icon {{ icon_classes }}">
+            <i class="{{ icon }}"></i>
+        </span>
+        {% endif %}
+        {% if label %}
+        <span>{{ label }}</span>
+        {% endif %}
+    </button>
+</div>
+{% endmacro %}
+
+{% macro checkbox(name, label_top='',label_side='', id='', field_classes='', is_disabled=False, is_checked=False) %}
+
+<div class="field">
+    {% if label_top %}
+    <label for="{{ id or name }}" class="label">{{ label_top }}</label>
+    {% endif %}
+    <div class="field">
+        <input id="{{ id or name }}" type="checkbox" name="{{ name }}" class="switch {{ field_classes }}" {% if is_checked %}checked{% endif %} {% if is_disabled %}disabled{% endif %}>
+        <label for="{{ id or name }}" class="label" >{%if label_side%}{{ label_side }}{%endif%}</label>
+    </div>
+</div> 
+
+{% endmacro %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}Creando perrito{% endblock %}
+
+{% block header %}
+<script src="{{ url_for('static', path='js/form_handler.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container ">
+        <form id="productForm">
+            <div class="columns">
+                <div class="column">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Rellena los datos del producto</p>
+                        </header>
+                        <div class="card-content">
+
+                            {{ macroforms.input('nombre',
+                            label='Nombre',
+                            type='text',
+                            left_icon='fa-solid fa-tag',
+                            left_icon_classes='has-text-info',
+                            placeholder="Nombre del producto (requerido).") }}
+
+                            {{ macroforms.input('descripcion',
+                            label='Descripción',
+                            type='text',
+                            left_icon='fa-solid fa-file-lines',
+                            left_icon_classes='has-text-info',
+                            placeholder="Descripción del producto (opcional).") }}
+
+                            <div class=" is-flex is is-flex-direction-row is-justify-content-flex-end">
+
+                                {{ macroforms.button(label='Agregar',
+                                type="submit",
+                                icon='fa-solid fa-floppy-disk',
+                                field_classes="is-info has-text-white mt-3") }}
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+    </form>
+    </div>
+</section>
+
+
+<script>
+    clearFormOnNavigation();
+</script>
+ 
+<script>
+    setupFormSubmission({
+    form: document.getElementById('productForm'),
+        submitUrl: '{{ url_for("create_product") }}',
+        shouldRedirect: true,
+        useIdempotency: true,
+        actionType: 'createProduct'  
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+.baloo-font {
+    font-family: 'Baloo', sans-serif;
+}
+
+.navbar-item {
+    font-family: "Baloo", cursive;
+    font-weight: 400; 
+    }
+
+.color-azul {
+    color: hsl(217, 79%, 53%);
+}
+.color-amarillo {
+    color: hsl(45, 100%, 50%);
+}
+
+.dashed-test {
+    border: 3px dashed black; 
+  }
+
+.is-hidden {
+    display: none;
+}
+
+
+/* Makes rows in gridjs look clickable */
+.gridjs-table tr:hover td {
+    cursor: pointer;
+    background-color: rgba(192, 192, 192, 0.1);
+}
+

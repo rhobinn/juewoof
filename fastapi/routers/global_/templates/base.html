@@ -1,0 +1,167 @@
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block tab_title %}{% endblock %}</title>
+
+
+    <!-- Favicon links -->
+    <link rel="icon" type="image/webp" sizes="32x32" href="{{ url_for('static', path='icons/juewoof-Favicon-32x32.webp') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/juewoof-Favicon-180x180.webp') }}">
+    <link rel="icon" type="image/webp" sizes="192x192" href="{{ url_for('static', path='icons/juewoof-Favicon-192x192.webp') }}">
+    
+    <!-- CSS -->
+        <!-- Bulma  -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bulma.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bulma-checkradio.css') }}">
+        <!-- FontAwesome  -->    
+    <link rel="stylesheet" href="{{ url_for('static', path='css/all.min.css') }}">
+        <!-- Global Personalized CSS  -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/juewoof.css') }}">
+
+    <!-- CDNs -->
+        <!-- Google's Ballo font  -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo&display=swap" rel="stylesheet">
+
+    {% block header %}{% endblock %}
+
+</head>
+
+<body class="">
+    <nav class="navbar is-info" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', path='img/juewoof-logo.webp') }}" alt="Juewoof Logo">
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div  class="navbar-menu">
+            <div class="navbar-start">
+                {% if is_authenticated %}
+                <a class="navbar-item has-text-white">
+                    Mis datos
+                  </a>
+                  <a class="navbar-item has-text-white">
+                    Mis perritos
+                  </a>
+      
+                  <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link has-text-white">
+                      Daypass
+                    </a>
+                    <div class="navbar-dropdown">
+                      <a class="navbar-item">
+                        Reservar
+                      </a>
+                      <a class="navbar-item is-selected">
+                        Comprar cuponera
+                      </a>
+                    </div>
+                  </div>
+      
+                  <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link has-text-white">
+                      Hotel
+                    </a>
+                    <div class="navbar-dropdown">
+                      <a class="navbar-item">
+                        Reservar
+                      </a>
+                    </div>
+                  </div>
+                {% else %}
+
+                <a class="navbar-item has-text-white">
+                    Hotel Canino
+                </a>
+                <a class="navbar-item has-text-white">
+                    Daypass
+                </a>
+                <a class="navbar-item has-text-white">
+                    Educación Canina
+                </a>
+                <a class="navbar-item has-text-white">
+                    WoofAdventures
+                </a>
+                <a class="navbar-item has-text-white">
+                    Sucursales
+                </a>
+                <a class="navbar-item has-text-white">
+                    Preguntas frecuentes
+                </a>
+                <a class="navbar-item has-text-white" href="https://www.tiktok.com/@juewoofmx">
+                    <span class="icon">
+                        <i class="fa-brands fa-tiktok fa-beat"></i>
+                    </span>
+                </a>
+                <a class="navbar-item has-text-white" href="https://www.instagram.com/juewoofmx">
+                    <span class="icon">
+                        <i class="fa-brands fa-instagram fa-beat"></i>
+                    </span>
+                </a>
+                <a class="navbar-item has-text-white" href="https://www.facebook.com/juewoofmx">
+                    <span class="icon">
+                        <i class="fa-brands fa-facebook fa-beat"></i>
+                    </span>
+                </a>
+
+                {% endif %}
+            </div>
+
+            <div class="navbar-end">
+                {% if is_authenticated %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-danger has-text-white" href="{{ url_for('index') }}">
+                            Log out
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-primary ">
+                            <strong>Sign up</strong>
+                        </a>
+                        <a class="button is-light " href="{{ url_for('home') }}">
+                            Log in
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </nav>
+    {% if hero_title or hero_subtitle%}
+    <section class="hero is-small has-background-info-light">
+        <div class="hero-body">
+            {% if hero_title%}
+            <p class="title has-text-info">{{hero_title}}</p>
+            {% endif %}
+            {% if hero_subtitle%}
+            <p class="subtitle has-text-info">{{hero_subtitle}}</p>
+            {% endif %}
+
+        </div>
+    </section>
+    {% endif %}
+
+    <main>
+    {% block content %}{% endblock %}
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}
+Perritos de {{ entities_data[0].tutor.nombre| capitalize  }} {{ entities_data[0].tutor.apellido_materno| capitalize  }}
+{% endblock %}
+
+{% block header %}
+<!-- Add Grid.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" />
+
+<!-- Add Grid.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.production.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Grid.js Table Container -->
+
+<div class="section is-fullheight">
+    <div id="gridjs-table"></div>    
+</div>
+
+<script>
+
+const entitiesData = [
+        {% for entity in entities_data %}
+        {
+            id: "{{ entity.id }}",
+            nombre: "{{ entity.nombre}}",
+            raza: "{{ entity.raza if entity.raza else '' }}",
+            peso: "{{ entity.peso if entity.peso else '' }}",
+            genero: "{{ entity.genero if entity.genero else '' }}",
+            tamano: "{{ entity.tamano if entity.tamano else '' }}",
+            color: "{{ entity.color if entity.color else ''}}",
+            is_vaccinated: "{{ entity.is_vaccinated }}",
+            is_neutered: "{{ entity.is_neutered }}",
+            fecha_nacimiento: "{{ entity.fecha_nacimiento }}",
+        },
+        {% endfor %}
+    ];
+    // Initialize Grid.js
+    const grid = new gridjs.Grid({
+        columns: [
+            {
+                name: "ID",
+                hidden: true
+            },
+            "Nombre",
+            "Raza",
+            "Peso",
+            "Género",
+            "Tamaño",
+            "Color",
+            "Vacunado",
+            "Esterilizado",
+            "Fecha Nacimiento",            
+        ],
+        data: entitiesData.map(entity => [
+            entity.id,
+            entity.nombre,
+            entity.raza,
+            entity.peso,
+            entity.genero,
+            entity.tamano,
+            entity.color,
+            entity.is_vaccinated ? "Sí" : "No",
+            entity.is_neutered ? "Sí" : "No",
+            entity.fecha_nacimiento,
+
+        ]),
+        pagination: {
+            enabled: true,
+            limit: 10
+        },
+        search: true,
+        sort: true,
+
+    }).render(document.getElementById("gridjs-table"));
+
+    grid.on('rowClick', (...args) => {
+    const rowData = args[1].cells;
+    const entityId = rowData[0].data;  // Get ID from the hidden column
+    window.location.href = entityUrl.replace('DYNAMIC_UUID', entityId);
+});
+</script>
+
+<script>
+    const entityUrl = "{{ url_for('get_dog', entity_uuid='DYNAMIC_UUID') }}";
+</script>
+
+{% endblock %}

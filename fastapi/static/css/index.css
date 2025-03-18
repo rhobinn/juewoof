@@ -1,0 +1,61 @@
+.main-div-min-height {
+    min-height: calc(100vh - 3.25rem);
+    overflow: hidden;
+}
+
+.juega-img {
+    width: 90vw;        /* Default for mobile */
+}
+@media screen and (min-width: 768px) {
+    .juega-img {
+        width: 75vw;    /* For tablet */
+    }
+}
+@media screen and (min-width: 1024px) {
+    .juega-img {
+        width: 60vw;    /* For desktop */
+    }
+}
+@media screen and (min-width: 1216px) {
+    .juega-img {
+        width: 60vw;    /* For widescreen */
+    }
+}
+
+.texto-secundario-main{
+    width: 80vw;            /* Default for mobile */
+}
+@media screen and (min-width: 768px) {
+    .texto-secundario-main{
+        width: 80vw;        /* For tablet */
+    }
+}
+@media screen and (min-width: 1024px) {
+    .texto-secundario-main{
+        width: 60vw;        /* For desktop */
+    }
+}
+@media screen and (min-width: 1216px) {
+    .texto-secundario-main{
+        width: 60vw;        /* For widescreen */
+    }
+}
+
+.perritos-img{
+    margin-top: -3rem;         /* Default for mobile */
+}
+@media screen and (min-width: 768px) {
+    .perritos-img{
+        margin-top: -4rem;     /* For tablet */
+    }
+}
+@media screen and (min-width: 1024px) {
+    .perritos-img{
+        margin-top: -6rem;     /* For desktop */
+    }
+}
+@media screen and (min-width: 1216px) {
+    .perritos-img{
+        margin-top: -10rem;      /* For widescreen */
+    }
+}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}
+Productos
+{% endblock %}
+
+{% block header %}
+<!-- Add Grid.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" />
+
+<!-- Add Grid.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.production.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Grid.js Table Container -->
+
+<div class="section is-fullheight">
+    <div id="gridjs-table"></div>    
+</div>
+
+<script>
+
+    const entitiesData = [
+        {% for entity in entities_data %}
+        {
+            id: "{{ entity.id }}",
+            nombre: "{{ entity.nombre }}",
+            descripcion: "{{ entity.descripcion if entity.descripcion else '' }}",
+        },
+        {% endfor %}
+    ];
+
+    // Initialize Grid.js
+    const grid = new gridjs.Grid({
+        columns: [
+            {
+                name: "ID",
+                hidden: true
+            },
+            "Nombre",
+            "Descripcion",       
+        ],
+        data: entitiesData.map(entity => [
+            entity.id,
+            entity.nombre,
+            entity.descripcion || "N/A",
+
+        ]),
+        pagination: {
+            enabled: true,
+            limit: 10
+        },
+        search: true,
+        sort: true,
+
+    }).render(document.getElementById("gridjs-table"));
+
+    grid.on('rowClick', (...args) => {
+    const rowData = args[1].cells;
+    const entityId = rowData[0].data;  // Get ID from the hidden column
+    window.location.href = entityUrl.replace('DYNAMIC_UUID', entityId);
+});
+</script>
+
+<script>
+    const entityUrl = "{{ url_for('get_product', entity_uuid='DYNAMIC_UUID') }}";
+</script>
+
+{% endblock %}

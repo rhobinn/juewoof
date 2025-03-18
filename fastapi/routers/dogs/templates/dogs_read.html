@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}{{" ".join([entity_data.nombre, entity_data.tutor.apellido_paterno.capitalize()[0],  entity_data.tutor.apellido_materno.capitalize()[0]])}}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container ">
+        <form id="dogForm">
+            <div class="columns">
+                <div class="column is-6">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Datos</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+
+
+                                {{ macroforms.input('nombre',
+                                is_readonly=True,
+                                value=entity_data.nombre,
+                                label='Nombre',
+                                type='text',
+                                left_icon='fa-solid fa-dog',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('raza',
+                                is_readonly=True,
+                                value=entity_data.raza,
+                                label='Raza',
+                                type='text',
+                                left_icon='fa-solid fa-paw',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('color',
+                                is_readonly=True,
+                                value=entity_data.color,
+                                label='Color',
+                                type='text',
+                                left_icon='fa-solid fa-palette',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input_addons('peso',
+                                is_readonly=True,
+                                value=entity_data.peso,
+                                label='Peso',
+                                type='text',
+                                left_icon='fa-solid fa-weight-scale',
+                                left_icon_classes='has-text-info',
+                                control_classes='is-expanded',
+                                addons_right='<div class="control">
+                                                <a class="button is-static">kg</a>
+                                            </div>'
+                                ) 
+                                }}
+
+                                {{ macroforms.input('alergias',
+                                is_readonly=True,
+                                value=entity_data.alergias,
+                                label='Alergias',
+                                type='text',
+                                left_icon='fa-solid fa-stethoscope',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('microchip_id',
+                                is_readonly=True,
+                                value=entity_data.microchip_id,
+                                label='ID Chip',
+                                type='text',
+                                left_icon='fa-solid fa-microchip',
+                                left_icon_classes='has-text-info') }}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title"> &nbsp;</p>
+                        </header>
+                        <div class="card-content">
+
+                            {{ macroforms.input('genero',
+                            is_readonly=True,
+                            value=entity_data.genero,
+                            label='Género',
+                            type='text',
+                            left_icon='fa-solid fa-venus-mars',
+                            left_icon_classes='has-text-info') }}
+
+                            {{ macroforms.input('tamano',
+                            is_readonly=True,
+                            value=entity_data.tamano,
+                            label='Tamaño',
+                            type='text',
+                            left_icon='fa-solid fa-ruler-vertical',
+                            left_icon_classes='has-text-info') }}
+
+                            {{ macroforms.input('temperamento',
+                            is_readonly=True,
+                            value=entity_data.temperamento,
+                            label='Temperamento',
+                            type='text',
+                            left_icon='fa-solid fa-masks-theater',
+                            left_icon_classes='has-text-info') }}
+
+
+                            {{ macroforms.input('fecha_nacimiento',
+                            is_readonly=True,
+                            value=entity_data.fecha_nacimiento,
+                            label='Fecha de nacimiento',
+                            type='text',
+                            left_icon='fa-solid fa-cake-candles',
+                            left_icon_classes='has-text-info') }}
+
+                            {{ macroforms.input('ultima_desparasitacion',
+                            is_readonly=True,
+                            value=entity_data.ultima_desparasitacion,
+                            label='Ultima Desparasitación',
+                            type='text',
+                            left_icon='fa-solid fa-bug',
+                            left_icon_classes='has-text-info') }}
+
+                            {{ macroforms.checkbox('is_vaccinated',
+                            is_checked=entity_data.is_vaccinated,
+                            is_disabled=True,
+                            label_top='Vacunas completas',
+                            field_classes='is-rounded') }}
+
+                            {{ macroforms.checkbox('is_neutered',
+                            is_checked=entity_data.is_neutered,
+                            is_disabled=True,
+                            label_top='Esterilizado',
+                            field_classes='is-rounded') }}
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Foto</p>
+                        </header>
+                        <div class="card-content">
+
+                            {% if entity_data.photo_path%}
+                            <iframe style="pointer-events:none; border:0;"
+                                src="https://drive.google.com/file/d/{{entity_data.photo_path}}/preview" width="100%"
+                                height="auto" frameborder="0" scrolling="no" seamless=""></iframe>
+                            {% else %}
+                            <div
+                                class="content is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+                                <div class="box has-background-light is-flex is-justify-content-center is-align-items-center"
+                                    style="width: 200px; height: 200px;">
+                                    <img src="{{ url_for('static_dogs', path='img/dog-photo-placeholder.jpg') }}"
+                                        alt="Photo placeholder" class="">
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <a href="{{ url_for('update_dog', entity_uuid=entity_data.id) }}">
+                                <button type="button" class="button is-fullwidth is-info">
+                                    <span>
+                                        Actualizar información
+                                    </span>
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrows-spin"></i>
+                                    </span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+    
+    
+    {% endblock %}

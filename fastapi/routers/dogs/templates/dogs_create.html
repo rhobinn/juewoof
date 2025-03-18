@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}Creando perrito{% endblock %}
+
+{% block header %}
+<script src="{{ url_for('static', path='js/form_handler.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container ">
+        <form id="dogForm">
+            <div class="columns">
+                <div class="column is-9">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Rellena los datos de tu perrito</p>
+                        </header>
+                        <div class="card-content">
+
+                            {{ macroforms.input('nombre',
+                            label='Nombre',
+                            type='text',
+                            left_icon='fa-solid fa-dog',
+                            left_icon_classes='has-text-info',
+                            placeholder="Nombre del perro (requerido).") }}
+
+                            {{ macroforms.input('raza',
+                            label='Raza',
+                            type='text',
+                            left_icon='fa-solid fa-paw',
+                            left_icon_classes='has-text-info',
+                            placeholder="Raza del perro (opcional).") }}
+
+                            {{ macroforms.input('color',
+                            label='Color',
+                            type='text',
+                            left_icon='fa-solid fa-palette',
+                            left_icon_classes='has-text-info',
+                            placeholder="Color del perro (opcional).") }}
+
+                            {{ macroforms.input_addons('peso',
+                            label='Peso',
+                            type='number',
+                            step='any',
+                            left_icon='fa-solid fa-weight-scale',
+                            left_icon_classes='has-text-info',
+                            placeholder="Peso en kg (opcional).",
+                            control_classes='is-expanded',
+                            addons_right='<div class="control">
+                                <a class="button is-static">kg</a>
+                            </div>') }}
+
+                            {{ macroforms.input('alergias',
+                            label='Alergias',
+                            type='text',
+                            left_icon='fa-solid fa-stethoscope',
+                            left_icon_classes='has-text-info',
+                            placeholder="Alergias conocidas (opcional).") }}
+
+                            {{ macroforms.input('microchip_id',
+                            label='ID Chip',
+                            type='text',
+                            left_icon='fa-solid fa-microchip',
+                            left_icon_classes='has-text-info',
+                            placeholder="ID del microchip (opcional).") }}
+
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Otros datos</p>
+                        </header>
+                        <div class="card-content">
+
+                            {{ macroforms.select('genero',
+                            label='Género',
+                            left_icon='fa-solid fa-venus-mars',
+                            left_icon_classes='has-text-info',
+                            placeholder="Seleccione el género.",
+                            options_dict=select_options_dict['genero'],
+                            field_classes='has-text-info is-fullwidth') }}
+
+                            {{ macroforms.select('tamano',
+                            label='Tamaño',
+                            left_icon='fa-solid fa-ruler-vertical',
+                            left_icon_classes='has-text-info',
+                            placeholder="Seleccione el tamaño.",
+                            options_dict=select_options_dict['tamano'],
+                            field_classes='has-text-info is-fullwidth') }}
+
+                            {{ macroforms.select('temperamento',
+                            label='Temperamento',
+                            left_icon='fa-solid fa-masks-theater',
+                            left_icon_classes='has-text-info',
+                            placeholder="Seleccione el temperamento.",
+                            options_dict=select_options_dict['temperamento'],
+                            field_classes='has-text-info is-fullwidth') }}
+
+                            {{ macroforms.input('fecha_nacimiento',
+                            label='Fecha de nacimiento',
+                            type='date',
+                            left_icon='fa-solid fa-cake-candles',
+                            left_icon_classes='has-text-info') }}
+                            
+                            {{ macroforms.input('ultima_desparasitacion',
+                            label='Ultima Desparasitación',
+                            type='date',
+                            left_icon='fa-solid fa-bug',
+                            left_icon_classes='has-text-info') }}
+
+                            {{ macroforms.checkbox('is_vaccinated',
+                            label_top='Vacunas completas',
+                            field_classes='is-rounded') }}
+
+                            {{ macroforms.checkbox('is_neutered',
+                            label_top='Esterilizado',
+                            field_classes='is-rounded') }}
+
+                            {{ macroforms.button(label='Guardar',
+                            type="submit",
+                            icon='fa-solid fa-floppy-disk',
+                            field_classes="is-info has-text-white is-fullwidth") }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+    </form>
+    </div>
+</section>
+
+<script>
+    clearFormOnNavigation();
+</script>
+ 
+<script>
+    setupFormSubmission({
+    form: document.getElementById('dogForm'),
+        submitUrl: '{{ url_for("create_dog") }}',
+        shouldRedirect: true,
+        useIdempotency: true,
+        actionType: 'createDog'  
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}Actualizando: {{entity_data.nombre.capitalize()}}{% endblock %}
+
+{% block header %}
+<script src="{{ url_for('static', path='js/form_handler.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+<section class="section">
+    <div class="container ">
+        <form id="productForm">
+            <div class="columns">
+                <div class="column is-9">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Datos</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+
+
+                                {{ macroforms.input('nombre',
+                                value=entity_data.nombre,
+                                label='Nombre',
+                                type='text',
+                                left_icon='fa-solid fa-tag',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('descripcion',
+                                value=entity_data.descripcion,
+                                label='Descricpción',
+                                type='text',
+                                left_icon='fa-solid fa-file-lines',
+                                left_icon_classes='has-text-info') }}
+
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Foto</p>
+                        </header>
+                        <div class="card-content">
+
+                            {% if entity_data.photo_path%}
+                            <iframe style="pointer-events:none; border:0;"
+                                src="https://drive.google.com/file/d/{{entity_data.photo_path}}/preview" width="100%"
+                                height="auto" frameborder="0" scrolling="no" seamless=""></iframe>
+                            {% else %}
+                            <div
+                                class="content is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+                                <div class="box has-background-light is-flex is-justify-content-center is-align-items-center"
+                                    style="width: 200px; height: 200px;">
+                                    <img src="{{ url_for('static_dogs', path='img/dog-photo-placeholder.jpg') }}"
+                                        alt="Photo placeholder" class="">
+                                </div>
+                            </div>
+                            {% endif %}
+
+
+                            <button type="button"  class="button is-fullwidth ">
+                                <span>
+                                    Subir/cambiar foto
+                                </span>
+                                <span class="icon is-small">
+                                    <i class="fa-solid fa-camera-retro"></i>
+                                </span>
+                            </button>
+                        
+                            <button class="button is-fullwidth is-info mt-1">
+                                <span>
+                                    Guardar
+                                </span>
+                                <span class="icon is-small ">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                </span>
+                            </button>
+                            <a href="{{ url_for('get_product', entity_uuid=entity_data.id) }}">
+                                <button  type="button" class="button is-fullwidth is-black mt-1">
+                                    <span>
+                                        Cancelar
+                                    </span>
+                                    <span class="icon is-small ">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </span>
+                                </button>  
+                            </a>
+      
+                            {% if entity_data.is_active%}
+                            <button onclick="activateOrDeactivateEntity('{{ url_for('deactivate_product', entity_uuid=entity_data.id) }}')" class="button is-fullwidth is-small is-danger has-text-white mt-6">
+                                <span>Desactivar</span>
+                                <span class="icon is-small">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </span>
+                            </button>
+                            {% else %}
+                            <button onclick="activateOrDeactivateEntity('{{ url_for('activate_product', entity_uuid=entity_data.id) }}')" class="button is-fullwidth is-small is-success has-text-white mt-6">
+                                <span>Activar</span>
+                                <span class="icon is-small">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </span>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</section>
+
+
+<script>
+    setupFormSubmission({
+    form: document.getElementById('productForm'),
+        submitUrl: '{{ url_for("update_product", entity_uuid=entity_data.id) }}',
+        shouldRedirect: true,
+        useIdempotency: false,
+        formMethod:'PATCH'
+    });
+</script>
+
+<script>
+    highlightModifiedFields('productForm');
+</script>
+
+
+<script>
+    activateOrDeactivateEntity(activateUrl);
+</script>
+
+
+
+{% endblock %}

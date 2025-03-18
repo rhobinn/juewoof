@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block tab_title %}Home{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/index.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="main-div-min-height is-flex is-flex-direction-column is-justify-content-space-between is-align-items-center ">
+    <div class="juega-img mt-6">
+        <img  src="{{ url_for('static', path='img/juega_y_aprende.webp') }}">
+    </div>
+    <div class="texto-secundario-main has-text-centered baloo-font color-azul is-size-2-widescreen is-size-1-tablet is-size-3-mobile">
+        Juewoof! es el hotel para perros en Guadalajara más divertido
+    </div>
+    <div class="texto-secundario-main has-text-centered baloo-font color-amarillo is-size-2-widescreen is-size-1-tablet is-size-3-mobile">
+        Nuestra filosofía es que tu perro Juegue y Aprenda mientras la pasa increíble con nosotros.
+    </div>
+    <div class="perritos-img is-flex is-flex-direction-column is-justify-content-flex-end" >
+        <img class="" src="{{ url_for('static', path='img/portada.png') }}" >
+    </div>
+</div>
+<div  class="main-div-min-height is-flex is-flex-direction-column is-justify-content-space-between is-align-items-center ">
+
+</div>
+
+{% endblock %}
