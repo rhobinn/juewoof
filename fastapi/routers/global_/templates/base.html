@@ -35,112 +35,81 @@
             <a class="navbar-item" href="{{ url_for('index') }}">
                 <img src="{{ url_for('static', path='img/juewoof-logo.webp') }}" alt="Juewoof Logo">
             </a>
-
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
+    
+            <a role="button" class="navbar-burger" id="burger" aria-label="menu" aria-expanded="false" data-target="nav-links">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-
-        <div  class="navbar-menu">
+    
+        <div class="navbar-menu" id="nav-links">
             <div class="navbar-start">
-                {% if is_authenticated %}
-                <a class="navbar-item has-text-white">
-                    Mis datos
-                  </a>
-                  <a class="navbar-item has-text-white">
-                    Mis perritos
-                  </a>
-      
-                  <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link has-text-white">
-                      Daypass
-                    </a>
+                {% if user %}                
+                
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link has-text-white">Mis perritos</a>
                     <div class="navbar-dropdown">
-                      <a class="navbar-item">
-                        Reservar
-                      </a>
-                      <a class="navbar-item is-selected">
-                        Comprar cuponera
-                      </a>
+                        <a class="navbar-item" href="{{ url_for('create_dog') }}">Agregar perrito</a>
+                        <a class="navbar-item" href="{{ url_for('get_my_dogs') }}">Ver mis perritos</a>
                     </div>
-                  </div>
-      
-                  <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link has-text-white">
-                      Hotel
-                    </a>
+                </div>
+                
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link has-text-white">Daypass</a>
                     <div class="navbar-dropdown">
-                      <a class="navbar-item">
-                        Reservar
-                      </a>
+                        <a class="navbar-item" href="{{ url_for('reserve_daypass') }}">Reservar</a>
+                        <a class="navbar-item" href="{{ url_for('buy_daypasses') }}">Comprar cuponera</a>
                     </div>
-                  </div>
+                </div>
+    
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link has-text-white">Hotel</a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item">Reservar</a>
+                    </div>
+                </div>
                 {% else %}
-
-                <a class="navbar-item has-text-white">
-                    Hotel Canino
-                </a>
-                <a class="navbar-item has-text-white">
-                    Daypass
-                </a>
-                <a class="navbar-item has-text-white">
-                    Educación Canina
-                </a>
-                <a class="navbar-item has-text-white">
-                    WoofAdventures
-                </a>
-                <a class="navbar-item has-text-white">
-                    Sucursales
-                </a>
-                <a class="navbar-item has-text-white">
-                    Preguntas frecuentes
-                </a>
+                <a class="navbar-item has-text-white">Hotel Canino</a>
+                <a class="navbar-item has-text-white">Daypass</a>
+                <a class="navbar-item has-text-white">Educación Canina</a>
+                <a class="navbar-item has-text-white">WoofAdventures</a>
+                <a class="navbar-item has-text-white">Sucursales</a>
+                <a class="navbar-item has-text-white">Preguntas frecuentes</a>
                 <a class="navbar-item has-text-white" href="https://www.tiktok.com/@juewoofmx">
-                    <span class="icon">
-                        <i class="fa-brands fa-tiktok fa-beat"></i>
-                    </span>
+                    <span class="icon"><i class="fa-brands fa-tiktok fa-beat"></i></span>
                 </a>
                 <a class="navbar-item has-text-white" href="https://www.instagram.com/juewoofmx">
-                    <span class="icon">
-                        <i class="fa-brands fa-instagram fa-beat"></i>
-                    </span>
+                    <span class="icon"><i class="fa-brands fa-instagram fa-beat"></i></span>
                 </a>
                 <a class="navbar-item has-text-white" href="https://www.facebook.com/juewoofmx">
-                    <span class="icon">
-                        <i class="fa-brands fa-facebook fa-beat"></i>
-                    </span>
+                    <span class="icon"><i class="fa-brands fa-facebook fa-beat"></i></span>
                 </a>
-
                 {% endif %}
             </div>
-
+    
             <div class="navbar-end">
-                {% if is_authenticated %}
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-danger has-text-white" href="{{ url_for('index') }}">
-                            Log out
-                        </a>
+                {% if user %}
+                <div class="navbar-item has-dropdown" id="dropdown">
+                    <a class="navbar-link has-text-white" id="dropdown-trigger">
+                        {{user.name}}
+                    </a>
+    
+                    <div class="navbar-dropdown is-right">
+                        <a class="navbar-item">Mis datos</a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="{{ url_for('logout') }}">Log out</a>
                     </div>
                 </div>
                 {% else %}
-
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a class="button is-primary ">
-                            <strong>Sign up</strong>
-                        </a>
-                        <a class="button is-light " href="{{ url_for('home') }}">
-                            Log in
-                        </a>
+                        <a class="button is-primary"><strong>Sign up</strong></a>
+                        <a class="button is-light" href="{{ url_for('login') }}">Log in</a>
                     </div>
                 </div>
                 {% endif %}
-
             </div>
         </div>
     </nav>
@@ -165,3 +134,37 @@
 </body>
 
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Dropdown functionality
+        const dropdown = document.getElementById("dropdown");
+        const dropdownTrigger = document.getElementById("dropdown-trigger");
+
+        if (dropdown && dropdownTrigger) {
+            dropdownTrigger.addEventListener("click", function (event) {
+                event.stopPropagation(); // Prevents closing when clicking inside the dropdown
+                dropdown.classList.toggle("is-active");
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!dropdown.contains(event.target)) {
+                    dropdown.classList.remove("is-active");
+                }
+            });
+        }
+
+        // Mobile menu toggle
+        const burger = document.getElementById("burger");
+        const navLinks = document.getElementById("nav-links");
+
+        if (burger && navLinks) {
+            burger.addEventListener("click", function () {
+                burger.classList.toggle("is-active");
+                navLinks.classList.toggle("is-active");
+            });
+        }
+    });
+    
+</script>

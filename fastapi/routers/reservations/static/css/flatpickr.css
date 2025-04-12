@@ -1,0 +1,22 @@
+.flatpickr-day {
+    position: relative;
+    display: block;
+}
+.dot {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    box-sizing: content-box;
+}
+.low { background-color: green; }
+.medium { background-color: orange; }
+.high { background-color: red; }
+
+/* Ensure Flatpickr is above Bulma elements */
+.flatpickr-calendar {
+    z-index: 1000 !important;
+}

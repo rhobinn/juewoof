@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
-from db.models import IdempotencyKey
+from database.models import IdempotencyKey
 from typing import Type
 from sqlmodel import SQLModel
 import uuid
@@ -17,8 +17,9 @@ def get_create_view(
         template_name: str,
         hero_title: str = "",
         hero_subtitle: str = "", 
+        user: dict, 
+        **kwargs,
     ):
-
 
     # Create select_options_dict dynamically
     select_options_dict = generate_options_dict(fields_with_options)
@@ -30,6 +31,8 @@ def get_create_view(
             "select_options_dict": select_options_dict,
             "hero_title": hero_title,
             "hero_subtitle": hero_subtitle,
+            "user":user,
+            **kwargs
         },
     )
 
@@ -45,6 +48,7 @@ def get_update_view(
         hero_title: str = "",
         hero_subtitle: str = "", 
         db: Session, 
+        user: dict
     ):
 
     statement = select(EntityClass).where(EntityClass.id == entity_uuid)
@@ -77,6 +81,7 @@ def get_update_view(
             "select_options_dict": select_options_dict,
             "hero_title": hero_title,
             "hero_subtitle": hero_subtitle,
+            "user": user,
         },
     )
 
@@ -140,7 +145,8 @@ def get_read_view(
     template_name: str,
     hero_title: str = "",
     hero_subtitle: str = "",
-    extra_fields: dict = None  # Now default to None, but can be passed as a dictionary
+    extra_fields: dict = None,  # Now default to None, but can be passed as a dictionary
+    user: dict,
 ):
     """Fetches entity data and renders it using the specified template."""
 
@@ -171,6 +177,7 @@ def get_read_view(
             "entity_data": entity_data,
             "hero_title": hero_title,
             "hero_subtitle": hero_subtitle,
+            "user": user
         },
     )
 
@@ -250,7 +257,9 @@ async def get_all_entities(
     enum_fields: list = None,
     extra_db_fields: list = None,
     hero_title: str = None,
-    hero_subtitle: str = None
+    hero_subtitle: str = None,
+    user: dict,
+
 ):
     # Build the query to fetch data from the database
     statement = select(EntityClass).options(*extra_db_fields) if extra_db_fields else select(EntityClass)
@@ -284,5 +293,6 @@ async def get_all_entities(
         "request": request,
         "entities_data": entities,
         "hero_title": hero_title,
-        "hero_subtitle": hero_subtitle
+        "hero_subtitle": hero_subtitle,
+        "user":user,
     })

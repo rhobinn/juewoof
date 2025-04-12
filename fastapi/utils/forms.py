@@ -1,18 +1,22 @@
+def snake_to_camel(snake_str: str) -> str:
+    components = snake_str.split('_')
+    return ''.join(x.capitalize() for x in components)
+
 
 def generate_options_dict(fields_with_options):
     """
     Generates a dictionary of options for each field in the provided list of fields.
-    Each field is expected to be associated with an Enum class in db.models.
+    Each field is expected to be associated with an Enum class in database.models.
     
     The dictionary's keys and values are the Enum member values.
     """
-    import db.enums
+    import database.enums
     from enum import Enum
     select_options_dict = {}
 
     for field in fields_with_options:
         # Capitalize the field name to match the Enum class naming convention
-        enum_class = getattr(db.enums, field.capitalize(), None)
+        enum_class = getattr(database.enums, snake_to_camel(field), None)
 
         # If the Enum class exists, create a dictionary from the Enum members
         # Is enum_class a class object?
@@ -25,7 +29,7 @@ def generate_options_dict(fields_with_options):
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse
-from db.models import IdempotencyKey
+from database.models import IdempotencyKey
 from sqlmodel import Session, select
 
 def handle_idempotency_key(

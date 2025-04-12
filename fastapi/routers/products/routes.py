@@ -5,24 +5,27 @@ from sqlmodel import Session, select
 from main import get_session
 import uuid 
 from utils.crud import create_entity, update_entity, get_create_view, get_read_view, get_update_view, deactivate_entity, activate_entity, get_all_entities
+from core.auth import get_current_user
 
-from db.models import ProductCreate, Product
+from database.models import ProductCreate, Product
 
 products_router = APIRouter()
 
 products_templates = Jinja2Templates(directory=["routers/global_/templates", "routers/products/templates"])
-TUTOR_UUID = uuid.UUID("73091836-59ed-44d6-9e04-b3bdcdf1928d")
-
 
 ### CREATE | GET : WEBVIEW - Creation of product
 @products_router.get("/create", response_class=HTMLResponse)
-async def create_product_form(request: Request):
+async def create_product_form(  request: Request,
+                                user: dict = Depends(get_current_user)
+                              ):
 
     hero_title="Agregar producto"
-    return products_templates.TemplateResponse("products_create.html", {"request": request,  "hero_title":hero_title})
+    return products_templates.TemplateResponse("products_create.html", {"request": request,  "hero_title":hero_title, "user": user})
 
 @products_router.get("/create", response_class=HTMLResponse)
-async def create_product_form(request: Request):
+async def create_product_form(  request: Request,
+                                user: dict = Depends(get_current_user)
+                              ):
 
     fields_with_options = []
 
@@ -33,6 +36,7 @@ async def create_product_form(request: Request):
         fields_with_options=fields_with_options,
         hero_title="Agregar producto",
         hero_subtitle="",
+        user=user,
     )
 
 ### CREATE | POST - Creation of a product
@@ -52,10 +56,11 @@ async def create_product(   request: Request,
 
 ### READ | GET: WEBVIEW- View info of a single dog
 @products_router.get("/{entity_uuid}")
-async def get_product(request: Request, 
-                  entity_uuid: uuid.UUID, 
-                  db: Session = Depends(get_session)
-                  ):
+async def get_product(  request: Request, 
+                        entity_uuid: uuid.UUID, 
+                        db: Session = Depends(get_session),
+                        user: dict = Depends(get_current_user)
+                    ):
 
     return get_read_view(
         request=request,
@@ -66,6 +71,7 @@ async def get_product(request: Request,
         template_name="products_read.html",
         hero_title="Información del producto",
         hero_subtitle="",
+        user=user
     )
 
 
@@ -87,10 +93,11 @@ async def update_product(   request: Request,
 
 ### UPDATE | GET: WEBVIEW - update info of a product 
 @products_router.get("/update/{entity_uuid}")
-async def update_product_form(   request: Request,
-                        entity_uuid: uuid.UUID, 
-                        db: Session = Depends(get_session)
-                    ):
+async def update_product_form(  request: Request,
+                                entity_uuid: uuid.UUID, 
+                                db: Session = Depends(get_session),
+                                user: dict = Depends(get_current_user)
+                            ):
 
     return get_update_view(
         request=request,
@@ -102,6 +109,7 @@ async def update_product_form(   request: Request,
         template_name="products_update.html",
         hero_title="Actualizar",
         hero_subtitle="Actualiza los detalles del producto",
+        user=user,
         db=db,
     )
 
@@ -126,7 +134,10 @@ async def activate_product(request: Request, entity_uuid: uuid.UUID, db: Session
 from sqlalchemy.orm import selectinload
 ### INDEX(ALL)| GET : WEBVIEW  View info of all product 
 @products_router.get("/index/all", response_class=HTMLResponse)  
-async def get_all_products(request: Request, db: Session = Depends(get_session)):
+async def get_all_products( request: Request,
+                            db: Session = Depends(get_session),
+                            user: dict = Depends(get_current_user),
+                           ):
     return await get_all_entities(  request=request,
                                     templates=products_templates,
                                     db=db,
@@ -134,5 +145,6 @@ async def get_all_products(request: Request, db: Session = Depends(get_session))
                                     template_name="Products_index.html", enum_fields=None,
                                     extra_db_fields=None, 
                                     hero_title=None,
-                                    hero_subtitle=None
+                                    hero_subtitle=None,
+                                    user=user
                                 )

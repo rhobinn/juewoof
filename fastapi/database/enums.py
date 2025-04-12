@@ -53,9 +53,9 @@ class Temperamento(str, Enum):
     muy_tranquilo = "Muy Tranquilo"
 
 class PricingType(str, Enum):
-    FLAT = "fijo"
-    VOLUME = "volumen"
-    SUBSCRIPTION = "suscripción"
+    FLAT = "Fijo"
+    VOLUME = "Volumen"
+    SUBSCRIPTION = "Suscripción"
 
 
 # class SubscriptionFrequency(str, Enum):

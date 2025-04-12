@@ -5,25 +5,27 @@ from sqlmodel import Session
 from main import get_session
 import uuid 
 from utils.crud import create_entity, update_entity, get_create_view, get_read_view, get_update_view, deactivate_entity, activate_entity, get_all_entities
+from core.auth import get_current_user
 
-from db.models import DogCreate, Dog, User
+from database.models import DogCreate, Dog, User
 
 dogs_router = APIRouter()
 
 dogs_templates = Jinja2Templates(directory=["routers/global_/templates", "routers/dogs/templates"])
-TUTOR_UUID = uuid.UUID("73091836-59ed-44d6-9e04-b3bdcdf1928d")
 
 @dogs_router.get("/home", response_class=HTMLResponse)
-async def home(request: Request):
-    is_authenticated = True
-    return dogs_templates.TemplateResponse("home.html", {"request": request, "is_authenticated": is_authenticated})
+async def home(request: Request, user: dict = Depends(get_current_user)):
+
+    return dogs_templates.TemplateResponse("home.html", {"request": request, "user": user})
 
 ### CREATE | GET : WEBVIEW - Creation of a dog
 @dogs_router.get("/create", response_class=HTMLResponse)
-async def create_dog_form(request: Request):
+async def create_dog_form(request: Request,
+                          user: dict = Depends(get_current_user)
+                          ):
 
     fields_with_options = ['genero', 'tamano', 'temperamento']
-
+    
     return get_create_view(
         request=request,
         templates=dogs_templates, 
@@ -31,13 +33,15 @@ async def create_dog_form(request: Request):
         fields_with_options=fields_with_options,
         hero_title="Agregar perrito",
         hero_subtitle="",
+        user=user,
     )
 
 ### CREATE | POST - Creation of a dog
 @dogs_router.post("/create")
 async def create_dog(   request: Request, 
                         entity_data: DogCreate = Body(...), 
-                        db: Session = Depends(get_session)
+                        db: Session = Depends(get_session),
+                        user: dict = Depends(get_current_user)
                         ):  
     
     return create_entity(
@@ -45,14 +49,15 @@ async def create_dog(   request: Request,
         entity_data=entity_data, 
         EntityClass=Dog, 
         db=db, 
-        extra_fields={"tutor_id": TUTOR_UUID}
+        extra_fields={"tutor_id": user['id']}
     )
 
 ### READ | GET: WEBVIEW- View info of a single dog
 @dogs_router.get("/{entity_uuid}")
 async def get_dog(request: Request, 
                   entity_uuid: uuid.UUID, 
-                  db: Session = Depends(get_session)
+                  db: Session = Depends(get_session),
+                  user: dict = Depends(get_current_user)
                   ):
 
     return get_read_view(
@@ -64,7 +69,8 @@ async def get_dog(request: Request,
         template_name="dogs_read.html",
         hero_title="Información del perro",
         hero_subtitle="",
-        extra_fields=['tutor']
+        extra_fields=['tutor'],
+        user=user
     )
 
 #     hero_title=entity.nombre.capitalize()
@@ -76,7 +82,7 @@ async def get_dog(request: Request,
 async def update_dog(   request: Request, 
                         entity_uuid: uuid.UUID, 
                         entity_data: DogCreate = Body(...), 
-                        db: Session = Depends(get_session)
+                        db: Session = Depends(get_session),
                     ):  
     return update_entity(
         request=request, 
@@ -87,10 +93,11 @@ async def update_dog(   request: Request,
     )
 ### UPDATE | GET: WEBVIEW - update info of a dog 
 @dogs_router.get("/update/{entity_uuid}")
-async def update_dog_form(   request: Request,
-                        entity_uuid: uuid.UUID, 
-                        db: Session = Depends(get_session)
-                    ):
+async def update_dog_form(  request: Request,
+                            entity_uuid: uuid.UUID, 
+                            db: Session = Depends(get_session),
+                            user: dict = Depends(get_current_user)
+                        ):
 
     return get_update_view(
         request=request,
@@ -102,6 +109,7 @@ async def update_dog_form(   request: Request,
         template_name="dogs_update.html",
         hero_title="Actualizar",
         hero_subtitle="Actualiza los detalles del Perro",
+        user=user,
         db=db,
     )
 
@@ -127,7 +135,10 @@ from sqlalchemy.orm import selectinload
 
 ### INDEX(ALL)| GET : WEBVIEW  View info of all dogs 
 @dogs_router.get("/index/all", response_class=HTMLResponse)  
-async def get_all_dogs(request: Request, db: Session = Depends(get_session)):
+async def get_all_dogs(request: Request, 
+                       db: Session = Depends(get_session),
+                       user: dict = Depends(get_current_user),
+                       ):
     return await get_all_entities(  request=request,
                                     templates=dogs_templates,
                                     db=db,
@@ -136,15 +147,23 @@ async def get_all_dogs(request: Request, db: Session = Depends(get_session)):
                                     enum_fields=['genero', 'tamano', 'temperamento'],
                                     extra_db_fields=[selectinload(Dog.tutor)], 
                                     hero_title=None,
-                                    hero_subtitle=None)
+                                    hero_subtitle=None,
+                                    user=user
+                                    )
 
 
 ### INDEX(MY)| GET : WEBVIEW  View info of all dogs from the signed-in-user's dogs
 @dogs_router.get("/index/my", response_class=HTMLResponse)  
-async def get_my_dogs(request: Request, db: Session = Depends(get_session)):
+async def get_my_dogs(  request: Request, 
+                        db: Session = Depends(get_session),
+                        user: dict = Depends(get_current_user)
+                    ):
 
-    tutor_uuid=TUTOR_UUID
-    statement = select(User).where(User.id == tutor_uuid)
+    print("usuario: ", user)
+    from main import app
+    print("usuarioAPP: ", app.state.is_user_logged_in)
+
+    statement = select(User).where(User.id == user['id'])
     tutor = db.exec(statement).one_or_none()
 
     if tutor is None:
@@ -161,7 +180,12 @@ async def get_my_dogs(request: Request, db: Session = Depends(get_session)):
     hero_title="Mis perritos"
     hero_subtitle=tutor.dogs[0].tutor.nombre.capitalize()+" "+tutor.dogs[0].tutor.apellido_materno.capitalize()
 
-    return dogs_templates.TemplateResponse("dogs_index.html", {"request": request, "entities_data":active_dogs, "hero_title":hero_title, "hero_subtitle":hero_subtitle})
+    return dogs_templates.TemplateResponse("dogs_index.html", {"request": request,
+                                                               "entities_data":active_dogs, 
+                                                               "hero_title":hero_title, 
+                                                               "hero_subtitle":hero_subtitle, 
+                                                               "user":user
+                                                               })
 
 from sqlmodel import select
 from typing import List
@@ -169,7 +193,11 @@ from fastapi import HTTPException
 
 ### INDEX(USER)| GET : WEBVIEW  View info of all dogs from an especific  tutor 
 @dogs_router.get("/index/tutor/{tutor_uuid}", response_class=HTMLResponse)  
-async def get_user_dogs(request: Request, tutor_uuid: uuid.UUID, db: Session = Depends(get_session)):
+async def get_user_dogs(request: Request,
+                        tutor_uuid: uuid.UUID,
+                        db: Session = Depends(get_session),
+                        user: dict = Depends(get_current_user)
+                        ):
     statement = select(User).where(User.id == tutor_uuid)
     tutor = db.exec(statement).one_or_none()
 
@@ -184,5 +212,10 @@ async def get_user_dogs(request: Request, tutor_uuid: uuid.UUID, db: Session = D
 
     hero_title="Los perritos de"
     hero_subtitle=tutor.dogs[0].tutor.nombre.capitalize()+" "+tutor.dogs[0].tutor.apellido_materno.capitalize()
-    return dogs_templates.TemplateResponse("dogs_index.html", {"request": request, "entities_data":tutor.dogs, "hero_title":hero_title, "hero_subtitle":hero_subtitle })
+    return dogs_templates.TemplateResponse("dogs_index.html", {"request": request,
+                                                               "entities_data":tutor.dogs,
+                                                               "hero_title":hero_title,
+                                                               "hero_subtitle":hero_subtitle,
+                                                               "user":user
+                                                               })
 

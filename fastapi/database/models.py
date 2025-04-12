@@ -1,8 +1,8 @@
-from db.enums import MexicoStates, Genero, Tamano, Temperamento, PricingType
+from database.enums import MexicoStates, Genero, Tamano, Temperamento, PricingType
 from sqlmodel import SQLModel, Field, Relationship
-from sqlalchemy.dialects.postgresql import UUID
+# from sqlalchemy.dialects.postgresql import UUID
 from datetime import date, datetime, timezone
-from pydantic import field_validator
+from pydantic import EmailStr, field_validator
 from typing import List, Optional
 import uuid
 
@@ -30,6 +30,8 @@ class UserBase(SQLModel):
     nombre: str = Field(max_length=100)
     apellido_paterno: Optional[str] = None
     apellido_materno: Optional[str] = None
+    email: EmailStr | None = Field(default=None)
+
     email: str = Field(unique=True) 
     celular: Optional[str] = None
     calle: Optional[str] = None
@@ -112,10 +114,11 @@ class ProductCreate(ProductBase):
     pass
 
 class PriceBase(SQLModel):
-    producto_id: uuid.UUID = Field(foreign_key="product.id")
-    cantidad: int  # Stored in cents (e.g., $10.00 → 1000)
-    currency: str = Field(default="usd")
-    precio_tipo: PricingType = Field(default=PricingType.FLAT)  # Each precio has its own type
+    product_id: uuid.UUID = Field(foreign_key="product.id")
+    price: int  # Stored in cents (e.g., $10.00 → 1000)
+    currency: str = Field(default="mxn")
+    quantity: int  = Field(default=1)
+    pricing_type: PricingType = Field(default=PricingType.FLAT)  # Each precio has its own type
     # frequency: SubscriptionFrequency = Field(default=SubscriptionFrequency.MONTHLY)  # Each precio has its own type
 
 class Price(PriceBase, TimestampsMixin, ActiveMixin, UUIDMixin, table=True):

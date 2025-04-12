@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %} {% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container ">
+        <form id="productForm">
+            <div class="columns">
+                <div class="column is-6">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Datos</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+
+
+                                {{ macroforms.input('pricing_type',
+                                is_readonly=True,
+                                value=entity_data.pricing_type,
+                                label='Nombre',
+                                type='text',
+                                left_icon='fa-solid fa-tag',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('quantity',
+                                is_readonly=True,
+                                value=entity_data.quantity,
+                                label='Descripción',
+                                type='text',
+                                left_icon='fa-solid fa-file-lines',
+                                left_icon_classes='has-text-info') }}
+
+                                {{ macroforms.input('price',
+                                is_readonly=True,
+                                value=entity_data.price,
+                                label='Descripción',
+                                type='text',
+                                left_icon='fa-solid fa-file-lines',
+                                left_icon_classes='has-text-info') }}
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Precios</p>
+                        </header>
+                        <div class="card-content">
+                            <a href="{{ url_for('update_product', entity_uuid=entity_data.id) }}">
+                                <button type="button" class="button is-fullwidth is-info">
+                                    <span>
+                                        Agregar precio
+                                    </span>
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-3">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Foto</p>
+                        </header>
+                        <div class="card-content">
+
+                            {% if entity_data.photo_path%}
+                            <iframe style="pointer-events:none; border:0;"
+                                src="https://drive.google.com/file/d/{{entity_data.photo_path}}/preview" width="100%"
+                                height="auto" frameborder="0" scrolling="no" seamless=""></iframe>
+                            {% else %}
+                            <div
+                                class="content is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+                                <div class="box has-background-light is-flex is-justify-content-center is-align-items-center"
+                                    style="width: 200px; height: 200px;">
+                                    <img src="{{ url_for('static_dogs', path='img/dog-photo-placeholder.jpg') }}"
+                                        alt="Photo placeholder" class="">
+                                </div>
+                            </div>
+                            {% endif %}
+
+
+                            <a href="{{ url_for('update_product', entity_uuid=entity_data.id) }}">
+                                <button type="button" class="button is-fullwidth is-info">
+                                    <span>
+                                        Actualizar información
+                                    </span>
+                                    <span class="icon is-small">
+                                        <i class="fa-solid fa-arrows-spin"></i>
+                                    </span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+    
+    
+    {% endblock %}

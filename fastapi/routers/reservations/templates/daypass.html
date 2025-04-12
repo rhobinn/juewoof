@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+{% block tab_title %}Reserva un daypass{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+<link rel="stylesheet" href="{{ url_for('static_reservations', path='css/flatpickr.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+<section class="section">
+
+    
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">Lista de perritos</p>
+                    </header>
+                    <div class="card-content" id="dogCheckboxContainer">
+                        <div id="dogCheckboxContainer">
+                            {% for dog in entities_data %}
+                            <p>
+                                <label>
+                                    <input type="checkbox" name="selected_options" value="{{dog.id}}"> {{dog.nombre}}
+                                </label>
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">Disponibilidad</p>
+                    </header>
+                    <div class="card-content">
+                        {{ macroforms.input('dates',
+                        label='Fechas seleccionadas',
+                        type='text',
+                        id="multiDatePicker",
+                        left_icon='fa-solid fa-calendar-days',
+                        placeholder="Selecciona tus perritos",
+                        ) }}
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">Reserva</p>
+                    </header>
+                    <div class="card-content">
+
+                        <div >
+                            <table class="table is-fullwidth">
+
+                              <tbody>
+                                <tr>
+                                    <td>Daypasses pagados:</td>
+                                    <td>
+                                        <span class='tag is-primary has-text-weight-bold'>
+                                        {{user.daypass_tokens}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                  <td>Daypasses seleccionados:</td>
+                                    <td>
+                                        <span class='tag is-info has-text-weight-bold' id="wantedDaypasses">0</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Balance</td>
+                                    <td>
+                                        <span class='tag is-black has-text-weight-bold' id="balanceDaypasses">
+                                            {{user.daypass_tokens}}  
+                                        </span>
+                                    </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        <div class="mt-5">
+                            <button id="buyMoreButton" class="button is-info is-fullwidth" style="display: none;">Comprar mas daypasses</button>
+                            <button id="reserveButton" class="button is-info is-fullwidth" style="display: none;">Reservar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script>
+        const totalTokens = {{ user.daypass_tokens }};
+</script>
+
+<script>
+function initializeDatePicker() {
+  const iconSpan = document.querySelector(".icon.is-left");
+  const originalIconHTML = iconSpan ? iconSpan.innerHTML : "";
+ 
+  const dateInput = document.getElementById("multiDatePicker");
+  if (dateInput) {
+    dateInput.placeholder = "Selecciona fechas";
+  }
+
+  if (iconSpan) {
+    iconSpan.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  }
+
+  fetch("{{ url_for('get_daypass_available_dates') }}")
+    .then(response => response.json())
+    .then(enabledDates => {
+        flatpickrInstance=flatpickr("#multiDatePicker", {
+        mode: "multiple",
+        dateFormat: "d-m-y",
+        locale: "es",
+        enable: enabledDates,
+        onChange: onDatesSelected, 
+      });
+      flatpickrInstance.clear()
+    })
+    .catch(error => {
+      console.error("Error fetching available dates:", error);
+    })
+    .finally(() => {
+        setTimeout(() => {
+            if (iconSpan) {
+                iconSpan.innerHTML = originalIconHTML;
+            }
+        }, 300); // 1 second delay
+    });
+}
+
+</script>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // initializeDatePicker();
+
+    const checkboxContainer = document.querySelector("#dogCheckboxContainer");
+    checkboxContainer.addEventListener("change", (event) => {
+      if (event.target.name === "selected_options") {
+        initializeDatePicker();
+      }
+    });
+  });
+</script>
+
+<script>
+
+    function onDatesSelected(selectedDates, dateStr, instance) {
+
+        const wantedDaypassesSpan = document.getElementById("wantedDaypasses");
+        const balanceDaypassesSpan = document.getElementById("balanceDaypasses");
+        const numberOfDays = selectedDates.length;
+        
+        const dog_container = document.getElementById("dogCheckboxContainer");
+        const selected_dogs = dog_container.querySelectorAll('input[name="selected_options"]:checked');
+        const numberOfDogs = selected_dogs.length;
+        
+        const wantedDays = numberOfDays*numberOfDogs;
+        const balance = totalTokens-wantedDays;
+        wantedDaypassesSpan.textContent = wantedDays;  
+        balanceDaypassesSpan.textContent = balance;  
+
+        if (balance > 0 && numberOfDays > 0) {
+            reserveButton.style.display = "block";
+            buyMoreButton.style.display = "none";
+        } else if (balance < 0) {
+            reserveButton.style.display = "none";
+            buyMoreButton.style.display = "block";
+        } else {
+            // balance is exactly zero
+            reserveButton.style.display = "none";
+            buyMoreButton.style.display = "none";
+        }
+        if (balance < 0) {
+            balanceDaypassesSpan.classList.remove("is-black");
+            balanceDaypassesSpan.classList.add("is-danger");
+        } else {
+            balanceDaypassesSpan.classList.remove("is-danger");
+            balanceDaypassesSpan.classList.add("is-black");
+        }
+
+    }
+</script>
+
+{% endblock %}
+
+from datetime import datetime
+import random

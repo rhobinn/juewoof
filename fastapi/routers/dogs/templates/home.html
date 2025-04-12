@@ -11,14 +11,11 @@
     <div class="columns is-vcentered is-centered">
         <div class="column is-half has-text-centered">
             <h1 class="title is-size-1-tablet is-size-2-mobile">
-                Hello Erik GV! 🐾
+                Hello {{user.name}}! 🐾
             </h1>
             <p class="subtitle is-size-4-tablet is-size-5-mobile">
                 Welcome to Juewoof – The most fun hotel for dogs in Guadalajara! Your pup will have a blast here.
             </p>
-            <button class="button is-light is-large">
-                Meet Our Playful Pups 🐶
-            </button>
         </div>
         <div class="column is-half has-text-centered">
           <img src="{{ url_for('static_dogs', path='img/cute-dog-placeholder.png') }}" alt="Cute dog" class="dog-img">

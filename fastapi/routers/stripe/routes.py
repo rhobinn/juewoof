@@ -10,6 +10,12 @@ stripe_router = APIRouter()
 
 stripe_templates = Jinja2Templates(directory=["routers/global_/templates", "routers/stripe/templates"])
 
+### Stripe
+
+from config.credentials import STRIPE_SECRET_KEY
+import stripe
+
+stripe.api_key = STRIPE_SECRET_KEY
 
 @stripe_router.get("/productsold")
 async def get_products():

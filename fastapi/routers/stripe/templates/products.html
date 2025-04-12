@@ -10,8 +10,8 @@
 <section class="section">
     <div class="container">
         <form id="checkout-form" action="/checkout" method="POST">
-            <div class="columns is-multiline">
-                    <div class="column is-one-third">
+            <div class="columns">
+                    <div class="column is-9">
                         <div class="card" style="border-radius: 10px; overflow: hidden;">
                             <div class="card-image">
                                 {% if product.images %}
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column is-one-third">
+                    <div class="column is-3">
                         <div class="card" style="border-radius: 10px; overflow: hidden;">
                             <div class="card-image">
                             </div>
@@ -52,16 +52,17 @@
                                             {% endfor %}
                                         </tbody>
                                     </table>
+                                                <!-- Checkout Button -->
+                                    <div class="has-text-centered mt-5">
+                                        <button type="button" id="checkout-button" class="button is-primary is-medium">Proceed to Payment</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
             </div>
 
-            <!-- Checkout Button -->
-            <div class="has-text-centered mt-5">
-                <button type="button" id="checkout-button" class="button is-primary is-medium">Proceed to Payment</button>
-            </div>
+
         </form>
     </div>
 </section>

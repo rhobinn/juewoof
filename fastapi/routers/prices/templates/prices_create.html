@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% import 'form_macros.html' as macroforms %}
+
+
+{% block tab_title %}Creando perrito{% endblock %}
+
+{% block header %}
+<script src="{{ url_for('static', path='js/form_handler.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container ">
+        <form id="productForm">
+            <div class="columns">
+                <div class="column">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Rellena los datos del producto</p>
+                            {{product_id}}
+                        </header>
+                        <div class="card-content">
+                            {{ macroforms.select('pricing_type',
+                            label='Tipo de precio',
+                            left_icon='fa-solid fa-tags',
+                            left_icon_classes='has-text-info',
+                            placeholder="Seleccione el tipo de precio.",
+                            options_dict=select_options_dict['pricing_type'],
+                            field_classes='has-text-info is-fullwidth') }}
+                    
+                            {{ macroforms.input('quantity',
+                            label='Cantidad',
+                            type='number',
+                            step='1',
+                            left_icon='fa-solid fa-tag',
+                            left_icon_classes='has-text-info',
+                            placeholder="Cantidad (requerido).") }}
+
+                            {{ macroforms.input_addons('price',
+                            label='Cantidad',
+                            type='number',
+                            step='0.01',
+                            left_icon='fa-solid fa-weight-scale',
+                            left_icon_classes='has-text-info',
+                            placeholder="Precio en pesos mexicanos (requerido).",
+                            control_classes='is-expanded',
+                            addons_right='<div class="control">
+                                <a class="button is-static">MXN</a>
+                            </div>') }}
+
+                            <input type="hidden" name="product_id" value="{{product_id}}">
+
+                            <div class=" is-flex is is-flex-direction-row is-justify-content-flex-end">
+                                {{ macroforms.button(label='Agregar',
+                                type="submit",
+                                icon='fa-solid fa-floppy-disk',
+                                field_classes="is-info has-text-white mt-3") }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+    </form>
+    </div>
+</section>
+
+
+<script>
+    clearFormOnNavigation();
+</script>
+ 
+<script>
+    setupFormSubmission({
+    form: document.getElementById('productForm'),
+        submitUrl: '{{ url_for("create_price") }}',
+        shouldRedirect: true,
+        useIdempotency: true,
+        actionType: 'createProduct'  
+    });
+</script>
+
+{% endblock %}
